@@ -45,6 +45,7 @@ public class User {
         this.orderHistory = orderHistory;
     }
 
+
     public void register() {
         System.out.println("User " + userName + " registered successfully!");
     }
@@ -65,5 +66,12 @@ public class User {
         } else {
             System.out.println("Order history for " + userName + ": " + orderHistory);
         }
+    }
+
+
+// Pour le test
+     public void addOrder(String order) {
+        orderHistory.add(order);
+        System.out.println("Order '" + order + "' added to history for " + userName);
     }
 }

@@ -43,6 +43,7 @@ public class Product {
         this.stockQuantity = stockQuantity;
     }
 
+
     public void updateStock(int quantity) {
         if (quantity > 0 && stockQuantity >= quantity) {
             this.stockQuantity -= quantity;
