@@ -6,17 +6,17 @@ public class user {
     private String username;
     private String email;
     private String password;
-    private List<Double> orders = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
 
     public user(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
     }
-    public List<Double> getOrders() {
+    public List<Order> getOrders() {
         return orders;
     }
-    public void setOrders(List<Double> orders) {
+    public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
     public String getUsername() {
@@ -37,5 +37,17 @@ public class user {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    public String register() {
+        return "User " + username + " registered successfully.";
+    }
+    public boolean login(String email, String password) {
+        return this.email.equals(email) && this.password.equals(password);
+    }
+    public List<String> viewOrderHistory() {
+        List<String> orderHistory = new ArrayList<>();
+        for (Order order : orders) {
+            orderHistory.add(order.toString());
+        }
+        return orderHistory;
+    }
 }
