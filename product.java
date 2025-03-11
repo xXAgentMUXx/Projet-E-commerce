@@ -2,13 +2,13 @@ public class product {
     private String productname;
     private int productID;
     private double price;
-    private int quantity;
+    private int Stockquantity;
 
-    public product(String productname, int productID, double price, int quantity ) {
+    public product(String productname, int productID, double price, int Stockquantity ) {
         this.productname = productname;
         this.productID = productID;
         this.price = price;
-        this.quantity = quantity;
+        this.Stockquantity = Stockquantity;
     }
     public String getProductname() {
         return productname;
@@ -28,10 +28,21 @@ public class product {
     public void setPrice(double price) {
         this.price = price;
     }
-    public int getQuantity() {
-        return quantity;
+    public int getStockquantity() {
+        return Stockquantity;
     }
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setStockquantity(int Stockquantity) {
+        this.Stockquantity = Stockquantity;
+    }
+    public String updateStock(int quantity) {
+        if (quantity > 0 && Stockquantity >= quantity) {
+            this.Stockquantity -= quantity;
+            return "Stock updated successfully. New stock quantity: " + Stockquantity;
+        } else {
+            return "Stock insufficient or invalid quantity.";
+        }
+    }
+    public String getProductDetails() {
+        return "Product ID: " + productID + ", Name: " + productname + ", Price: $" + price + ", Stock: " + Stockquantity;
     }
 }

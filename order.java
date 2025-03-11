@@ -1,10 +1,12 @@
-public class order {
+import java.util.List;
+
+public class Order {
     private String orderID;
     private String user;
-    private int items;
-    private boolean status;
+    private List<String> items;
+    private String status;
 
-    public order(String orderID, String user, int items, boolean status ) {
+    public Order(String orderID, String user, List<String>items, String status ) {
         this.orderID = orderID;
         this.user = user;
         this.items = items;
@@ -22,16 +24,37 @@ public class order {
     public void setUser(String user) {
         this.user = user;
     }
-    public int getItems() {
+    public List<String> getItems() {
         return items;
     }
-    public void setItems(int items) {
+    public void setItems(List<String> items) {
         this.items = items;
     }
-    public boolean  getStatus() {
+    public String getStatus() {
         return status;
     }
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
+    }
+    public String updateStatus(String newStatus) {
+        this.status = newStatus;
+        return "Order " + orderID + " status updated to: " + status;
+    }
+    public String placeOrder() {
+        StringBuilder result = new StringBuilder();
+        result.append("Order ").append(orderID).append(" placed by ").append(user).append(".\n");
+        for (String item : items) {
+            result.append("Updating stock for ").append(item).append("...\n");
+        }
+        return result.toString();
+    }
+    public static void main(String[] args) {
+        List<String> items = List.of("Item1", "Item2", "Item3");  
+        Order order = new Order("12345", "John Doe", items, "processing");
+
+        String orderConfirmation = order.placeOrder();
+        System.out.println(orderConfirmation);
+        String statusUpdate = order.updateStatus("shipping");
+        System.out.println(statusUpdate);
     }
 }

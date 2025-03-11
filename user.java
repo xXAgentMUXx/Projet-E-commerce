@@ -50,4 +50,7 @@ public class user {
         }
         return orderHistory;
     }
+    public double applyDiscount(double price) {
+        return price; 
+    }
 }
