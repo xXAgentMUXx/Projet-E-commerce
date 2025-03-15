@@ -17,14 +17,14 @@ public class Order {
     private Long id;
     private String orderID;
     @ManyToOne
-    private user user;
+    private User user;
     @ElementCollection
     private List<Long> items;
     private String status;
 
     public Order() {}
 
-    public Order(String orderID, user user, List<Long>items, String status ) {
+    public Order(String orderID, User user, List<Long>items, String status ) {
         this.orderID = orderID;
         this.user = user;
         this.items = items;
@@ -39,10 +39,10 @@ public class Order {
     public void setOrderID(String orderID) {
         this.orderID = orderID;
     }
-    public user getUser() {
+    public User getUser() {
         return user;
     }
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
     public List<Long> getItems() {

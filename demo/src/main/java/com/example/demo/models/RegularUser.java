@@ -1,6 +1,6 @@
 package com.example.demo.models;
 
-public class RegularUser extends user {
+public class RegularUser extends User {
     public RegularUser(String username, String email, String password) {
         super(username, email, password);
     }

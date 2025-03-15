@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.models.Order;
-import com.example.demo.models.user;
+import com.example.demo.models.User;
 
 @Repository
 
 public interface orderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByUser(user user);
+    List<Order> findByUser(User user);
 }

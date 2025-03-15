@@ -2,7 +2,17 @@ package com.example.demo.models;
 
 import java.util.HashMap;
 import java.util.Map;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Cart {
@@ -12,7 +22,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private user user; 
+    private User user; 
     
     @ElementCollection
     @CollectionTable(name = "cart_items", joinColumns = @JoinColumn(name = "cart_id"))
@@ -22,16 +32,16 @@ public class Cart {
 
     public Cart() {}
 
-    public Cart(user user) {
+    public Cart(User user) {
         this.user = user;
     }
     public Long getId() {
         return id;
     }
-    public user getUser() {
+    public User getUser() {
         return user;
     }
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
     public void removeProduct(product product) {

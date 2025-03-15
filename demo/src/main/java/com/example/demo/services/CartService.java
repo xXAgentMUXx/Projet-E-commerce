@@ -2,7 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.models.Cart;
 import com.example.demo.models.product;
-import com.example.demo.models.user;
+import com.example.demo.models.User;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
@@ -20,7 +20,7 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
     public Cart getCartByUser(Long userId) {
-        user user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
         return cartRepository.findByUser(user).orElseGet(() -> {
             Cart newCart = new Cart(user);
             return cartRepository.save(newCart);

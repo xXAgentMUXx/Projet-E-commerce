@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Order;
-import com.example.demo.models.user;
+import com.example.demo.models.User;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.orderRepository;
@@ -23,13 +23,13 @@ public class OrderService {
     private UserRepository userRepository;
 
     public Order placeOrder(Long userId, List<Long> productIds) {
-        user user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
         String orderID = UUID.randomUUID().toString();
         Order order = new Order(orderID, user, productIds, "Processing");
         return orderRepository.save(order);
     }
     public List<Order> getUserOrders(Long userId) {
-        user user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
         return orderRepository.findByUser(user);
     }
     public Optional<Order> getOrderById(Long orderId) {

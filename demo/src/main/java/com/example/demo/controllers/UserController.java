@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Order;
-import com.example.demo.models.user;
+import com.example.demo.models.User;
 import com.example.demo.services.OrderService;
 import com.example.demo.services.UserServices;
 
@@ -28,14 +28,14 @@ public class UserController {
     private OrderService orderService;
 
     @PostMapping("/register")
-    public ResponseEntity<user> registerUser(@RequestBody user user) {
+    public ResponseEntity<User> registerUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.registerUser(user));
     }
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody Map<String, String> loginData) {
         String email = loginData.get("email");
         String password = loginData.get("password");
-        Optional<user> authenticatedUser = userService.loginUser(email, password);
+        Optional<User> authenticatedUser = userService.loginUser(email, password);
 
         if (authenticatedUser.isPresent()) {
             return ResponseEntity.ok("Login successful!");
