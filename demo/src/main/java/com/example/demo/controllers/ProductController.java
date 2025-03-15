@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.models.product;
+import com.example.demo.models.Product;
 import com.example.demo.services.ProductService;
 
 @RestController
@@ -21,15 +21,15 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<product> addProduct(@RequestBody product product) {
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         return ResponseEntity.ok(productService.addProduct(product));
     }
     @GetMapping
-    public ResponseEntity<List<product>> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<product> getProductById(@PathVariable Long id) {
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productService.getProductById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

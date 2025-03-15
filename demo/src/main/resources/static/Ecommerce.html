@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon E-commerce</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Bienvenue sur notre boutique en ligne</h1>
+        <nav>
+            <ul>
+                <li><a href="#login">Connexion</a></li>
+                <li><a href="#products">Produits</a></li>
+                <li><a href="#cart">Panier</a></li>
+                <li><a href="#orders">Commandes</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="login">
+            <h2>Connexion / Inscription</h2>
+            <form id="login-form">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Mot de passe" required>
+                <button type="submit">Se connecter</button>
+            </form>
+        </section>
+        
+        <section id="products">
+            <h2>Nos Produits</h2>
+            <div id="product-list"></div>
+        </section>
+        
+        <section id="cart">
+            <h2>Votre Panier</h2>
+            <div id="cart-items"></div>
+            <button id="checkout">Passer la commande</button>
+        </section>
+        
+        <section id="orders">
+            <h2>Vos Commandes</h2>
+            <div id="order-list"></div>
+        </section>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>

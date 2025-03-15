@@ -4,10 +4,10 @@ public class AdminUser extends User {
     public AdminUser(String username, String email, String password) {
         super(username, email, password);
     }
-    public String addProduct(product product) {
+    public String addProduct(Product product) {
         return "Admin added product: " + product.getProductname();
     }
-    public String removeProduct(product product) {
+    public String removeProduct(Product product) {
         return "Admin removed product: " + product.getProductname();
     }
     @Override

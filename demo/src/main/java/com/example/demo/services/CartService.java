@@ -1,7 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.models.Cart;
-import com.example.demo.models.product;
+import com.example.demo.models.Product;
 import com.example.demo.models.User;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.ProductRepository;
@@ -28,13 +28,13 @@ public class CartService {
     }
     public Cart addProductToCart(Long userId, Long productId, int quantity) {
         Cart cart = getCartByUser(userId);
-        product product = productRepository.findById(productId).orElseThrow();
+        Product product = productRepository.findById(productId).orElseThrow();
         cart.addProduct(product, quantity);
         return cartRepository.save(cart);
     }
     public Cart removeProductFromCart(Long userId, Long productId) {
         Cart cart = getCartByUser(userId);
-        product product = productRepository.findById(productId).orElseThrow();
+        Product product = productRepository.findById(productId).orElseThrow();
         cart.removeProduct(product);
         return cartRepository.save(cart);
     }

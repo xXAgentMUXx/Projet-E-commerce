@@ -28,12 +28,18 @@ public class Cart {
     @CollectionTable(name = "cart_items", joinColumns = @JoinColumn(name = "cart_id"))
     @MapKeyJoinColumn(name = "product_id")
     @Column(name = "quantity")
-    private Map<product, Integer> items = new HashMap<>();
+    private Map<Product, Integer> items = new HashMap<>();
 
     public Cart() {}
 
     public Cart(User user) {
         this.user = user;
+    }
+    public Map<Product, Integer> getItems() {
+        return items;
+    }
+    public void setItems(Map<Product, Integer> items) {
+        this.items = items;
     }
     public Long getId() {
         return id;
@@ -44,17 +50,20 @@ public class Cart {
     public void setUser(User user) {
         this.user = user;
     }
-    public void removeProduct(product product) {
+    public void removeProduct(Product product) {
         items.remove(product);
     }
-    public void addProduct(product product, int quantity) {
+    public void addProduct(Product product, int quantity) {
         items.put(product, items.getOrDefault(product, 0) + quantity);
     }
     public double calculateTotal() {
         double total = 0;
-        for (Map.Entry<product, Integer> entry : items.entrySet()) {
+        for (Map.Entry<Product, Integer> entry : items.entrySet()) {
             total += entry.getKey().getPrice() * entry.getValue();
         }
         return total;
+    }
+    public void clear() {
+        items.clear();
     }
 }

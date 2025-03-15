@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class product {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,9 +19,9 @@ public class product {
     @JsonProperty("stock")
     private int Stockquantity;
 
-    public product() {}
+    public Product() {}
 
-    public product(String productname, int productID, double price, int Stockquantity ) {
+    public Product(String productname, int productID, double price, int Stockquantity ) {
         this.productname = productname;
         this.productID = productID;
         this.price = price;

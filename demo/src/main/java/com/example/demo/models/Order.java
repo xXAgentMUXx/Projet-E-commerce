@@ -3,28 +3,42 @@ package com.example.demo.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String orderID;
     @ManyToOne
+    @JsonBackReference
     private User user;
     @ElementCollection
-    private List<Long> items;
+    @ManyToMany
+    @JoinTable(
+    name = "order_items",
+    joinColumns = @JoinColumn(name = "order_id"),
+    inverseJoinColumns = @JoinColumn(name = "product_id")
+)
+    private List<Product> items;
     private String status;
 
     public Order() {}
 
-    public Order(String orderID, User user, List<Long>items, String status ) {
+    public Order(String orderID, User user, List<Product>items, String status ) {
         this.orderID = orderID;
         this.user = user;
         this.items = items;
@@ -45,10 +59,10 @@ public class Order {
     public void setUser(User user) {
         this.user = user;
     }
-    public List<Long> getItems() {
+    public List<Product> getItems() {
         return items;
     }
-    public void setItems(List<Long> items) {
+    public void setItems(List<Product> items) {
         this.items = items;
     }
     public String getStatus() {
@@ -64,7 +78,7 @@ public class Order {
     public String placeOrder() {
         StringBuilder result = new StringBuilder();
         result.append("Order ").append(orderID).append(" placed by ").append(user.getUsername()).append(".\n");
-        for (Long itemId : items) {
+        for (Product itemId : items) {
             result.append("Updating stock for product ID: ").append(itemId).append("...\n");
         }
         return result.toString();
