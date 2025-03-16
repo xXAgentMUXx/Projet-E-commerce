@@ -95,13 +95,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Passer une commande
     checkoutButton.addEventListener("click", async function () {
+        const userId = 1; // ID utilisateur réel à récupérer dynamiquement
+    
+        // Récupérer les IDs des produits dans le panier
+        const cartResponse = await fetch(`http://localhost:8080/cart/${userId}`);
+        if (!cartResponse.ok) {
+            alert("Erreur lors de la récupération du panier.");
+            return;
+        }
+    
+        const cart = await cartResponse.json();
+        const productIds = Object.keys(cart.items).map(id => parseInt(id)); // Convertit en tableau d'entiers
+    
+        if (productIds.length === 0) {
+            alert("Votre panier est vide !");
+            return;
+        }
+    
+        // Envoi de la commande
         const response = await fetch("http://localhost:8080/orders/place", {
-            method: "POST"
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: userId, productIds: productIds })
         });
+    
         if (response.ok) {
             alert("Commande passée avec succès !");
-            loadCart(); 
-            loadOrders(); 
+            loadCart(); // Recharger le panier
+            loadOrders(); // Recharger la liste des commandes
         } else {
             const error = await response.text();
             alert("Erreur lors de la commande: " + error);

@@ -1,6 +1,5 @@
 package com.example.demo.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Cart;
 import com.example.demo.models.Order;
-import com.example.demo.models.User;
 import com.example.demo.models.Product;
+import com.example.demo.models.User;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
@@ -33,20 +32,25 @@ public class OrderService {
     public Order placeOrder(Long userId, List<Long> productIds) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = cartService.getCartByUser(userId);
-        
+    
         if (cart.getItems().isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
     
-        String orderID = UUID.randomUUID().toString();
-        List<Product> products = new ArrayList<>(cart.getItems().keySet());
+        // Filtrer uniquement les produits commandés
+        List<Product> products = productRepository.findAllById(productIds);
         
+        if (products.isEmpty()) {
+            throw new RuntimeException("Aucun produit valide trouvé pour la commande.");
+        }
+    
+        String orderID = UUID.randomUUID().toString();
         Order order = new Order(orderID, user, products, "Processing");
         orderRepository.save(order);
-        
-        cart.clear(); 
+    
+        cart.clear();
         cartRepository.save(cart);
-        
+    
         return order;
     }
     public List<Order> getUserOrders(Long userId) {
