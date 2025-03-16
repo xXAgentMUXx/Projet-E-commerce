@@ -25,31 +25,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Ajouter au panier
     async function addToCart(productId) {
+        const userId = 1; // À récupérer dynamiquement si possible
+    
         const response = await fetch("http://localhost:8080/cart/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId })
+            body: JSON.stringify({ userId: userId, productId: productId, quantity: 1 })
         });
-
+    
+        const responseText = await response.text();
+        console.log("Réponse du serveur:", responseText);
+    
         if (response.ok) {
             alert("Produit ajouté au panier !");
             loadCart(); 
         } else {
-            alert("Erreur lors de l'ajout au panier");
+            alert("Erreur lors de l'ajout au panier : " + responseText);
         }
     }
 
     // Charger le panier
     async function loadCart() {
-        const response = await fetch("http://localhost:8080/cart");
-        const cart = await response.json();
-
-        cartItems.innerHTML = ""; 
-        cart.forEach(item => {
+        const userId = 1; // À remplacer par l'ID de l'utilisateur connecté
+        const response = await fetch(`http://localhost:8080/users/${userId}/orders`);
+        
+        if (!response.ok) {
+            alert("Erreur lors du chargement du panier");
+            return;
+        }
+        
+        const orders = await response.json();
+        cartItems.innerHTML = "";
+    
+        if (orders.length === 0) {
+            cartItems.innerHTML = "<p>Votre panier est vide.</p>";
+            return;
+        }
+    
+        // Prend la dernière commande (non confirmée si l'API le permet)
+        const lastOrder = orders[orders.length - 1];
+    
+        lastOrder.items.forEach(item => {
             const cartItem = document.createElement("div");
             cartItem.innerHTML = `
-                ${item.name} - ${item.price}€
-                <button onclick="removeFromCart(${item.id})">Retirer</button>
+                ${item.name} - ${item.price}€ - Quantité: ${item.quantity}
+                <button onclick="removeFromCart(${item.productID})">Retirer</button>
             `;
             cartItems.appendChild(cartItem);
         });
@@ -60,38 +80,47 @@ document.addEventListener("DOMContentLoaded", function () {
         const response = await fetch("http://localhost:8080/cart/remove", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId })
+            body: JSON.stringify({ userId: userId, productId: productId })
         });
-
+    
         if (response.ok) {
             alert("Produit retiré du panier !");
             loadCart(); 
         } else {
-            alert("Erreur lors de la suppression");
+            const error = await response.text();
+            alert("Erreur lors de la suppression: " + error);
         }
     }
+    
 
     // Passer une commande
     checkoutButton.addEventListener("click", async function () {
-        const response = await fetch("http://localhost:8080/orders/create", {
+        const response = await fetch("http://localhost:8080/orders/place", {
             method: "POST"
         });
-
         if (response.ok) {
             alert("Commande passée avec succès !");
             loadCart(); 
             loadOrders(); 
         } else {
-            alert("Erreur lors de la commande");
+            const error = await response.text();
+            alert("Erreur lors de la commande: " + error);
         }
     });
 
     // Charger les commandes
     async function loadOrders() {
-        const response = await fetch("http://localhost:8080/orders");
+        const userId = 1; // Récupérer l'ID réel de l'utilisateur connecté
+        const response = await fetch(`http://localhost:8080/users/${userId}/orders`);
+        
+        if (!response.ok) {
+            alert("Erreur lors du chargement des commandes");
+            return;
+        }
+    
         const orders = await response.json();
-
         orderList.innerHTML = "";
+    
         orders.forEach(order => {
             const orderDiv = document.createElement("div");
             orderDiv.innerHTML = `<p>Commande #${order.id} - Total: ${order.total}€</p>`;
@@ -106,17 +135,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const name = document.getElementById("product-name").value;
         const price = document.getElementById("product-price").value;
         const image = document.getElementById("product-image").value;
+        const Stockquantity = document.getElementById("product-quantity").value;
 
         const response = await fetch("http://localhost:8080/products", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, price, image })
+            body: JSON.stringify({ name, price, image, Stockquantity})
         });
 
         if (response.ok) {
             alert("Produit ajouté !");
             document.getElementById("product-form").reset();
-            loadProducts(); // Recharge les produits
+            loadProducts(); 
         } else {
             alert("Erreur lors de l'ajout du produit.");
         }
