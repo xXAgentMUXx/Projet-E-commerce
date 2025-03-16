@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.models.Order;
 import com.example.demo.dto.OrderRequest;
+import com.example.demo.models.Order;
 import com.example.demo.services.OrderService;
 
 @RestController
@@ -22,8 +22,15 @@ public class OrderController {
 
     @PostMapping("/place")
     public ResponseEntity<Order> placeOrder(@RequestBody OrderRequest request) {
-    return ResponseEntity.ok(orderService.placeOrder(request.getUserId(), request.getProductIds()));
+    System.out.println("📥 JSON reçu : userId = " + request.getUserId() + ", productIds = " + request.getProductIds());
+
+    if (request.getUserId() == null || request.getProductIds() == null || request.getProductIds().isEmpty()) {
+        System.out.println("❌ Erreur : userId ou productIds est NULL !");
+        return ResponseEntity.badRequest().build();
     }
+
+    return ResponseEntity.ok(orderService.placeOrder(request.getUserId(), request.getProductIds()));
+}
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
         return orderService.getOrderById(id)
