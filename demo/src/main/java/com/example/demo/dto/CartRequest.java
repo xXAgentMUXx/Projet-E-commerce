@@ -5,7 +5,6 @@ public class CartRequest {
     private Long productId;
     private int quantity;
 
-    // Constructeurs (optionnel mais recommandé)
     public CartRequest() {}
 
     public CartRequest(Long userId, Long productId, int quantity) {

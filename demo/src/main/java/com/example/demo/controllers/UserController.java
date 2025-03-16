@@ -32,16 +32,17 @@ public class UserController {
         return ResponseEntity.ok(userService.registerUser(user));
     }
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody Map<String, String> loginData) {
-        String email = loginData.get("email");
-        String password = loginData.get("password");
-        Optional<User> authenticatedUser = userService.loginUser(email, password);
+    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
+    String email = loginData.get("email");
+    String password = loginData.get("password");
+    Optional<User> authenticatedUser = userService.loginUser(email, password);
 
-        if (authenticatedUser.isPresent()) {
-            return ResponseEntity.ok("Login successful!");
-        }
-        return ResponseEntity.status(401).body("Invalid credentials");
+    if (authenticatedUser.isPresent()) {
+        User user = authenticatedUser.get();
+        return ResponseEntity.ok(Map.of("id", user.getId(), "username", user.getUsername()));
     }
+    return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+}
     @GetMapping("/{id}/orders")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long id) {
         List<Order> orders = orderService.getUserOrders(id);
