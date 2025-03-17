@@ -55,21 +55,18 @@ async function registerUser(event) {
     const username = document.getElementById("register-username").value;
     const email = document.getElementById("register-email").value;
     const password = document.getElementById("register-password").value;
+    const role = document.getElementById("register-role").value;
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/users/register`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password })
-        });
+    const response = await fetch(`${API_BASE_URL}/users/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password, role })
+    });
 
-        if (!response.ok) {
-            throw new Error("Erreur d'inscription. Vérifiez vos informations.");
-        }
-
-        alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
-    } catch (error) {
-        alert(error.message);
+    if (response.ok) {
+        alert("Inscription réussie !");
+    } else {
+        alert("Erreur d'inscription");
     }
 }
 
@@ -104,21 +101,55 @@ function displayProducts(products) {
 // Ajouter un produit via le formulaire
 async function addProduct(event) {
     event.preventDefault();
-    const name = document.getElementById("product-name").value;
-    const price = document.getElementById("product-price").value;
-    const stock = document.getElementById("product-quantity").value;
 
-    const response = await fetch(`${API_BASE_URL}/products`, {
+    const name = document.getElementById("product-name").value;
+    const price = parseFloat(document.getElementById("product-price").value);
+    const stock = parseInt(document.getElementById("product-quantity").value);
+    const userId = localStorage.getItem("userId"); 
+
+    if (!userId) {
+        alert("⛔️ Vous devez être connecté en tant qu'administrateur pour ajouter un produit !");
+        return;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/admin/products`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            "userId": userId 
+        },
         body: JSON.stringify({ name, price, stock })
     });
 
+    const data = await response.json();
     if (response.ok) {
-        alert("Produit ajouté avec succès");
+        alert("✅ Produit ajouté avec succès !");
         loadProducts();
     } else {
-        alert("Erreur lors de l'ajout du produit");
+        alert("❌ " + data);
+    }
+}
+
+async function deleteProduct(productId) {
+    const userId = localStorage.getItem("userId"); 
+
+    if (!userId) {
+        alert("⛔️ Vous devez être connecté en tant qu'administrateur pour supprimer un produit !");
+        return;
+    }
+    const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "userId": userId 
+        }
+    });
+    if (response.ok) {
+        alert("✅ Produit supprimé avec succès !");
+        loadProducts();
+    } else {
+        const errorText = await response.text();
+        alert("❌ " + errorText);
     }
 }
 

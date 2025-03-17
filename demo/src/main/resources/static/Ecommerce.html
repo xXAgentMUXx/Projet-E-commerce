@@ -30,14 +30,21 @@
         </section>
 
         <section id="register">
-    <h2>Inscription</h2>
-    <form id="register-form">
-        <input type="text" id="register-username" placeholder="Nom d'utilisateur" required>
-        <input type="email" id="register-email" placeholder="Email" required>
-        <input type="password" id="register-password" placeholder="Mot de passe" required>
-        <button type="submit">S'inscrire</button>
-    </form>
-    </section>
+            <h2>Inscription</h2>
+            <form id="register-form">
+                <input type="text" id="register-username" placeholder="Nom d'utilisateur" required>
+                <input type="email" id="register-email" placeholder="Email" required>
+                <input type="password" id="register-password" placeholder="Mot de passe" required>
+                
+                <label for="register-role">Rôle :</label>
+                <select id="register-role">
+                    <option value="REGULAR">Utilisateur</option>
+                    <option value="ADMIN">Administrateur</option>
+                </select>
+        
+                <button type="submit">S'inscrire</button>
+            </form>
+        </section>
         
         <section id="products">
             <h2>Nos Produits</h2>

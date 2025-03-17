@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Order;
+import com.example.demo.models.Role;
 import com.example.demo.models.User;
 import com.example.demo.services.OrderService;
 import com.example.demo.services.UserServices;
@@ -28,8 +29,13 @@ public class UserController {
     private OrderService orderService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.registerUser(user));
+    public ResponseEntity<User> registerUser(@RequestBody Map<String, String> userData) {
+        String username = userData.get("username");
+        String email = userData.get("email");
+        String password = userData.get("password");
+        Role role = Role.valueOf(userData.get("role").toUpperCase());
+    
+        return ResponseEntity.ok(userService.registerUser(username, email, password, role));
     }
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
