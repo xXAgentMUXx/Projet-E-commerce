@@ -250,27 +250,31 @@ function removeFromCart(productId) {
     displayCart(); // Mettre à jour l'affichage du panier
     alert("Produit supprimé du panier.");
 }
-async function loadOrders() {
+async function loadUserOrders() {
     let userId = localStorage.getItem("userId");
+
     if (!userId) {
         document.getElementById("order-list").innerHTML = "<p>Veuillez vous connecter pour voir vos commandes.</p>";
         return;
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/orders/user/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/users/${userId}/orders`);
         if (!response.ok) {
             throw new Error("Erreur lors du chargement des commandes");
         }
         
         const orders = await response.json();
-        displayOrders(orders);
+        console.log("📦 Réponse API - Commandes :", orders); // 🛠️ Ajout de logs
+
+        displayUserOrders(orders);
     } catch (error) {
         console.error("Erreur lors du chargement des commandes :", error);
+        document.getElementById("order-list").innerHTML = "<p>Impossible de charger les commandes.</p>";
     }
 }
 
-function displayOrders(orders) {
+function displayUserOrders(orders) {
     const orderContainer = document.getElementById("order-list");
     orderContainer.innerHTML = "";
 
@@ -282,19 +286,24 @@ function displayOrders(orders) {
     orders.forEach(order => {
         const orderElement = document.createElement("div");
         orderElement.classList.add("order");
+
         orderElement.innerHTML = `
             <h3>Commande ID: ${order.orderID}</h3>
             <p>Status: ${order.status}</p>
             <ul>
-                ${order.items.map(item => `<li>${item.productname} - ${item.price}€ (x${item.quantity})</li>`).join("")}
+                ${order.items.map(item => {
+                    const productName = item.productname || item.name || "Produit inconnu";
+                    const productPrice = item.price || 0;
+                    const quantity = item.quantity || 1;
+
+                    return `<li>${productName} - ${productPrice}€ (x${quantity})</li>`;
+                }).join("")}
             </ul>
             <hr>
         `;
         orderContainer.appendChild(orderElement);
     });
 }
-
-// Charger l'historique des commandes au démarrage
 document.addEventListener("DOMContentLoaded", () => {
-    loadOrders();
+    loadUserOrders();
 });

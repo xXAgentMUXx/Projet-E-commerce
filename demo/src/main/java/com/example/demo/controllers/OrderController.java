@@ -22,10 +22,8 @@ public class OrderController {
 
     @PostMapping("/place")
     public ResponseEntity<Order> placeOrder(@RequestBody OrderRequest request) {
-    System.out.println("📥 JSON reçu : userId = " + request.getUserId() + ", productIds = " + request.getProductIds());
 
     if (request.getUserId() == null || request.getProductIds() == null || request.getProductIds().isEmpty()) {
-        System.out.println("❌ Erreur : userId ou productIds est NULL !");
         return ResponseEntity.badRequest().build();
     }
 
