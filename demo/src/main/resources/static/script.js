@@ -102,31 +102,37 @@ function displayProducts(products) {
 async function addProduct(event) {
     event.preventDefault();
 
-    const name = document.getElementById("product-name").value;
-    const price = parseFloat(document.getElementById("product-price").value);
-    const stock = parseInt(document.getElementById("product-quantity").value);
-    const userId = localStorage.getItem("userId"); 
+    const userId = localStorage.getItem("userId");
+    const userRole = localStorage.getItem("userRole");
 
-    if (!userId) {
-        alert("⛔️ Vous devez être connecté en tant qu'administrateur pour ajouter un produit !");
+    // Vérifier si l'utilisateur est connecté et s'il est admin
+    if (!userId || userRole !== "ADMIN") {
+        alert("⛔️ Vous n'êtes pas administrateur. Veuillez vous connecter.");
         return;
     }
 
-    const response = await fetch(`${API_BASE_URL}/admin/products`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "userId": userId 
-        },
-        body: JSON.stringify({ name, price, stock })
-    });
+    const name = document.getElementById("product-name").value;
+    const price = parseFloat(document.getElementById("product-price").value);
+    const stock = parseInt(document.getElementById("product-quantity").value);
 
-    const data = await response.json();
-    if (response.ok) {
-        alert("✅ Produit ajouté avec succès !");
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/products`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "userId": userId
+            },
+            body: JSON.stringify({ name, price, stock })
+        });
+
+        if (!response.ok) {
+            throw new Error("Vous n'êtes pas administrateur, veuillez vous connectez.");
+        }
+
+        alert("Produit ajouté avec succès !");
         loadProducts();
-    } else {
-        alert("❌ " + data);
+    } catch (error) {
+        alert(error.message);
     }
 }
 
@@ -134,7 +140,7 @@ async function deleteProduct(productId) {
     const userId = localStorage.getItem("userId"); 
 
     if (!userId) {
-        alert("⛔️ Vous devez être connecté en tant qu'administrateur pour supprimer un produit !");
+        alert("Vous devez être connecté en tant qu'administrateur pour supprimer un produit !");
         return;
     }
     const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
@@ -145,7 +151,7 @@ async function deleteProduct(productId) {
         }
     });
     if (response.ok) {
-        alert("✅ Produit supprimé avec succès !");
+        alert("Produit supprimé avec succès !");
         loadProducts();
     } else {
         const errorText = await response.text();
@@ -296,8 +302,6 @@ async function loadUserOrders() {
         }
         
         const orders = await response.json();
-        console.log("📦 Réponse API - Commandes :", orders); // 🛠️ Ajout de logs
-
         displayUserOrders(orders);
     } catch (error) {
         console.error("Erreur lors du chargement des commandes :", error);
