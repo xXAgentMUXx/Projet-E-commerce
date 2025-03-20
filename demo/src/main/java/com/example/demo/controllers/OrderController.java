@@ -27,7 +27,7 @@ public class OrderController {
         return ResponseEntity.badRequest().build();
     }
 
-    return ResponseEntity.ok(orderService.placeOrder(request.getUserId(), request.getProductIds()));
+    return ResponseEntity.ok(orderService.placeOrder(request.getUserId(), request.getProductIds(), request.getQuantities()));
 }
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {

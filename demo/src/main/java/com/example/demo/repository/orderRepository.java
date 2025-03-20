@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.models.Order;
 import com.example.demo.models.User;
 
+// orderRepository interface extends JpaRepository to provide CRUD operations for the Order entity
 @Repository
-
 public interface orderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUser(User user);
 }

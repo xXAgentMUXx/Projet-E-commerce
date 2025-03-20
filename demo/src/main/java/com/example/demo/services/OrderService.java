@@ -24,8 +24,8 @@ public class OrderService {
     private UserRepository userRepository;
 
 
-    public Order placeOrder(Long userId, List<Long> productIds) {
-
+    public Order placeOrder(Long userId, List<Long> productIds, List<Integer> quantities) {
+        
         if (userId == null || productIds == null || productIds.isEmpty()) {
             throw new RuntimeException("❌ userId ou productIds est NULL !");
         }
@@ -39,10 +39,30 @@ public class OrderService {
         if (products.size() != productIds.size()) {
             throw new RuntimeException("❌ Certains produits envoyés n'existent pas en base.");
         }
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            int quantityOrdered = quantities.get(i);
+            
+            if (quantityOrdered > product.getStockquantity()) {
+                throw new RuntimeException("❌ Quantité demandée pour " + product.getProductname() + " dépasse le stock disponible. Stock actuel: " + product.getStockquantity());
+            }
+        }
         String orderID = UUID.randomUUID().toString();
-        Order order = new Order(orderID, user, products, "Processing");
+        Order order = new Order(orderID, user, products, "Processing", quantities);
         orderRepository.save(order);
     
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            int quantityOrdered = quantities.get(i);
+            
+            product.updateStock(quantityOrdered); 
+    
+            if (product.getStockquantity() < 0) {
+                productRepository.delete(product); 
+            } else {
+                productRepository.save(product); 
+            }
+        }
         return order;
     }
     public List<Order> getUserOrders(Long userId) {

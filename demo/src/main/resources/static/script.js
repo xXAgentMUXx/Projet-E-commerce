@@ -207,6 +207,7 @@ async function placeOrder() {
     }
 
     const productIds = cart.map(item => item.productId);
+    const quantities = cart.map(item => item.quantity); // Récupérer les quantités
 
     let userId = localStorage.getItem("userId");
     if (!userId) {
@@ -233,13 +234,13 @@ async function placeOrder() {
         return;
     }
 
-    console.log("Envoi de la commande avec :", { userId, productIds });
+    console.log("Envoi de la commande avec :", { userId, productIds, quantities }); // Inclure les quantités
 
     try {
         const response = await fetch(`${API_BASE_URL}/orders/place`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: parseInt(userId), productIds })
+            body: JSON.stringify({ userId: parseInt(userId), productIds, quantities }) // Envoyer les quantités
         });
 
         if (!response.ok) {
@@ -255,36 +256,15 @@ async function placeOrder() {
     }
 }
 
-async function checkCartValidity() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    if (cart.length === 0) return;
-
-    try {
-        // Récupérer la liste des produits valides depuis l'API
-        const response = await fetch(`${API_BASE_URL}/products`);
-        const products = await response.json();
-        const validProductIds = products.map(product => product.id);
-
-        const updatedCart = cart.filter(item => validProductIds.includes(item.productId));
-
-        if (updatedCart.length !== cart.length) {
-            localStorage.setItem("cart", JSON.stringify(updatedCart)); 
-            console.log("Panier mis à jour après le redémarrage de l'API");
-        }
-    } catch (error) {
-        console.error("Erreur lors de la vérification du panier :", error);
-    }
-}
-
 // Appeler cette fonction au chargement de la page
 document.addEventListener("DOMContentLoaded", () => {
     checkCartValidity();
 });
 function removeFromCart(productId) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart = cart.filter(item => item.productId !== productId); // Enlever l'élément dont l'ID correspond au produit à supprimer
+    cart = cart.filter(item => item.productId !== productId); 
     localStorage.setItem("cart", JSON.stringify(cart));
-    displayCart(); // Mettre à jour l'affichage du panier
+    displayCart(); 
     alert("Produit supprimé du panier.");
 }
 async function loadUserOrders() {
@@ -317,21 +297,21 @@ function displayUserOrders(orders) {
         orderContainer.innerHTML = "<p>Aucune commande passée.</p>";
         return;
     }
-
     orders.forEach(order => {
         const orderElement = document.createElement("div");
         orderElement.classList.add("order");
-
+    
         orderElement.innerHTML = `
             <h3>Commande ID: ${order.orderID}</h3>
             <p>Status: ${order.status}</p>
             <ul>
-                ${order.items.map(item => {
+                ${order.items.map((item, index) => {
                     const productName = item.productname || item.name || "Produit inconnu";
                     const productPrice = item.price || 0;
-                    const quantity = item.quantity || 1;
+                    const quantity = order.quantities[index] || 1; 
+                    const totalPrice = (productPrice * quantity).toFixed(2); 
 
-                    return `<li>${productName} - ${productPrice}€ (x${quantity})</li>`;
+                    return `<li>${productName} - Prix unitaire: ${productPrice}€ (x${quantity}) - Total: ${totalPrice}€</li>`;
                 }).join("")}
             </ul>
             <hr>
