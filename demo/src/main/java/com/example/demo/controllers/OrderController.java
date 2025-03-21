@@ -17,20 +17,23 @@ import com.example.demo.services.OrderService;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
+    // Injecting OrderService to interact with the database
     @Autowired
     private OrderService orderService;
 
+    //Places a new order for a user
     @PostMapping("/place")
     public ResponseEntity<Order> placeOrder(@RequestBody OrderRequest request) {
-
+    // Validate the request: userId and productIds must not be null or empty
     if (request.getUserId() == null || request.getProductIds() == null || request.getProductIds().isEmpty()) {
         return ResponseEntity.badRequest().build();
     }
-
     return ResponseEntity.ok(orderService.placeOrder(request.getUserId(), request.getProductIds(), request.getQuantities()));
 }
+    // Retrieves an order by its ID
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+        // Retrieve the order by ID and return it, or return a not found response if it doesn't exist
         return orderService.getOrderById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

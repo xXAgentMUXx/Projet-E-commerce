@@ -22,33 +22,41 @@ import com.example.demo.services.UserServices;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    // Injecting UserService to interact with the database
     @Autowired
     private UserServices userService;
 
+    // Injecting OrderService to interact with the database
     @Autowired
     private OrderService orderService;
 
+    // Registers a new user
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody Map<String, String> userData) {
+        // Extract user data from the request body
         String username = userData.get("username");
         String email = userData.get("email");
         String password = userData.get("password");
         Role role = Role.valueOf(userData.get("role").toUpperCase());
-    
+        
+        // Register the user and return the created user in the response body
         return ResponseEntity.ok(userService.registerUser(username, email, password, role));
     }
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
+    // Extract login credentials from the request body
     String email = loginData.get("email");
     String password = loginData.get("password");
     Optional<User> authenticatedUser = userService.loginUser(email, password);
-
+    
+    // If authenticated, return the user's ID and username in the response
     if (authenticatedUser.isPresent()) {
         User user = authenticatedUser.get();
         return ResponseEntity.ok(Map.of("id", user.getId(), "username", user.getUsername()));
     }
     return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
 }
+    // Retrieves the orders of a user by their ID
     @GetMapping("/{id}/orders")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long id) {
         List<Order> orders = orderService.getUserOrders(id);

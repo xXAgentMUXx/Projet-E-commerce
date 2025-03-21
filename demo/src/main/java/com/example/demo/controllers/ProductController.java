@@ -17,17 +17,21 @@ import com.example.demo.services.ProductService;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+    // Injecting ProductService to interact with the database
     @Autowired
     private ProductService productService;
 
+    // Add the product and return it
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         return ResponseEntity.ok(productService.addProduct(product));
     }
+    // Retrieve and return the list of all products
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
+    // Retrieve the product by ID and return it, or return a not found response if it doesn't exist
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productService.getProductById(id)
