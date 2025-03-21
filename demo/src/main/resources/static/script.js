@@ -16,10 +16,10 @@ const API_BASE_URL = "http://localhost:8080";
 function checkUserSession() {
     const userId = localStorage.getItem("userId");
     if (!userId) {
-        console.log("No user logged in. Resetting the cart.");
+        console.log("Aucun utilisateur connecté. Réinitialisation du panier.");
         localStorage.removeItem("cart");
     } else {
-        console.log("User logged in, ID:", userId);
+        console.log("Utilisateur connecté, ID :", userId);
     }
 }
 
@@ -36,14 +36,14 @@ async function loginUser(event) {
             body: JSON.stringify({ email, password })
         });
         if (!response.ok) {
-            throw new Error("Incorrect email or password");
+            throw new Error("Adresse email ou mot de passe incorrect");
         }
         const user = await response.json(); // Retrieve user data (ID)
         localStorage.setItem("userId", user.id); // Store user ID in localStorage
-        alert("Login successful!");
+        alert("Connexion réussi");
         location.reload(); // Reload the page to refresh the session
     } catch (error) {
-        alert("Login error: " + error.message);
+        alert("Erreur de connexion: " + error.message);
     }
 }
 
@@ -61,9 +61,9 @@ async function registerUser(event) {
         body: JSON.stringify({ username, email, password, role })
     });
     if (response.ok) {
-        alert("Registration successful!");
+        alert("Inscription réussie !");
     } else {
-        alert("Registration error");
+        alert("Erreur d'enregistrement");
     }
 }
 
@@ -74,7 +74,7 @@ async function loadProducts() {
         const products = await response.json();
         displayProducts(products); // Display products after loading
     } catch (error) {
-        console.error("Error loading products:", error);
+        console.error("Erreur lors du chargement des produits :", error);
     }
 }
 
@@ -104,7 +104,7 @@ async function addProduct(event) {
 
     // Check if the user is logged in and is an admin
     if (!userId || userRole !== "ADMIN") {
-        alert("You are not an admin. Please log in.");
+        alert("Vous n'êtes pas administrateur. Veuillez vous connecter.");
         return;
     }
     const name = document.getElementById("product-name").value;
@@ -121,9 +121,9 @@ async function addProduct(event) {
             body: JSON.stringify({ name, price, stock })
         });
         if (!response.ok) {
-            throw new Error("You are not an admin, please log in.");
+            throw new Error("Vous n'êtes pas un administrateur, veuillez vous connecter.");
         }
-        alert("Product added successfully!");
+        alert("Produit ajouté avec succès !");
         loadProducts(); // Reload the products list after adding a product
     } catch (error) {
         alert(error.message);
@@ -135,7 +135,7 @@ async function deleteProduct(productId) {
     const userId = localStorage.getItem("userId"); 
 
     if (!userId) {
-        alert("You must be logged in as an administrator to delete a product!");
+        alert("Vous devez être connecté en tant qu'administrateur pour supprimer un produit !");
         return;
     }
     const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
@@ -146,11 +146,11 @@ async function deleteProduct(productId) {
         }
     });
     if (response.ok) {
-        alert("Product deleted successfully!");
+        alert("Produit supprimé avec succès !");
         loadProducts(); // Reload the products list after deletion
     } else {
         const errorText = await response.text();
-        alert("❌ " + errorText);
+        alert(errorText);
     }
 }
 
@@ -164,7 +164,7 @@ function addToCart(productId) {
         cart.push({ productId, quantity: 1 }); // Add new product to cart
     }
     localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Product added to cart!");
+    alert("Produit ajouté au panier !");
     displayCart(); // Update the cart display
 }
 
@@ -195,7 +195,7 @@ async function placeOrder() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     if (cart.length === 0) {
-        alert("Your cart is empty!");
+        alert("Votre panier est vide!");
         return;
     }
     const productIds = cart.map(item => item.productId); // Get Product IDs
@@ -203,7 +203,7 @@ async function placeOrder() {
 
     let userId = localStorage.getItem("userId");
     if (!userId) {
-        alert("Please log in before placing an order.");
+        alert("Veuillez vous connecter avant de passer une commande.");
         return;
     }
 
@@ -217,15 +217,15 @@ async function placeOrder() {
         const validCartItems = productIds.filter(id => validProductIds.includes(id));
 
         if (validCartItems.length !== productIds.length) {
-            alert("Some products in your cart are no longer available!");
+            alert("Certains produits dans votre panier ne sont plus disponibles !");
             checkCartValidity(); // Check for cart validity
             return;
         }
     } catch (error) {
-        console.error("Error checking products before order:", error);
+        console.error("Erreur lors de la vérification des produits avant la commande :", error);
         return;
     }
-    console.log("Sending order with:", { userId, productIds, quantities }); // Log order details
+    console.log("Envoi de la commande avec :", { userId, productIds, quantities }); // Log order details
 
     try {
         const response = await fetch(`${API_BASE_URL}/orders/place`, {
@@ -236,12 +236,12 @@ async function placeOrder() {
         if (!response.ok) {
             throw new Error(await response.text());
         }
-        alert("Order placed successfully!");
+        alert("Commande passée avec succès !");
         localStorage.removeItem("cart"); // Clear the cart after successful order
         displayCart();
     } catch (error) {
-        console.error("Error placing order:", error);
-        alert("Error placing order: " + error.message);
+        console.error("Erreur lors de la passation de la commande :", error);
+        alert("Erreur lors de la passation de la commande :" + error.message);
     }
 }
 
@@ -256,7 +256,7 @@ function removeFromCart(productId) {
     cart = cart.filter(item => item.productId !== productId); // Remove product from cart
     localStorage.setItem("cart", JSON.stringify(cart));
     displayCart(); // Update the cart display
-    alert("Product removed from cart.");
+    alert("Produit retiré du panier.");
 }
 
 // Load and display user orders
@@ -270,12 +270,12 @@ async function loadUserOrders() {
     try {
         const response = await fetch(`${API_BASE_URL}/users/${userId}/orders`);
         if (!response.ok) {
-            throw new Error("Error loading orders");
+            throw new Error("Erreur lors du chargement des commandes");
         }
         const orders = await response.json();
         displayUserOrders(orders);
     } catch (error) {
-        console.error("Error loading orders:", error);
+        console.error("Erreur lors du chargement des commandes :", error);
         document.getElementById("order-list").innerHTML = "<p>Unable to load orders.</p>";
     }
 }
