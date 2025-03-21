@@ -26,6 +26,9 @@ public class CartItem {
         this.product = product;
         this.quantity = quantity;
     }
+    public Long getId() {
+        return id;
+    }
     public Product getProduct() {
         return product;
     }
