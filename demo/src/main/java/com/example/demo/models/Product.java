@@ -47,14 +47,8 @@ public class Product {
     public String getProductname() {
         return productname;
     }
-    public void setProductname(String productname) {
-        this.productname = productname;
-    }
     public int getProductID() {
         return productID;
-    }
-    public void setProductID(int productID) {
-        this.productID = productID;
     }
     public double getPrice() {
         return price;
@@ -64,9 +58,6 @@ public class Product {
     }
     public int getStockquantity() {
         return Stockquantity;
-    }
-    public void setStockquantity(int Stockquantity) {
-        this.Stockquantity = Stockquantity;
     }
      // Method to update the stock of the product
     public String updateStock(int quantity) {

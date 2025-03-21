@@ -51,9 +51,6 @@ public class Cart {
     public User getUser() {
         return user;
     }
-    public void setUser(User user) {
-        this.user = user;
-    }
     // Method to remove a product from the cart
     public void removeProduct(Product product) {
         items.removeIf(item -> item.getProduct().equals(product));

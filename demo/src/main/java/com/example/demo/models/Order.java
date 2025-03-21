@@ -72,14 +72,8 @@ public class Order {
     public String getOrderID() {
         return orderID;
     }
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
-    }
     public User getUser() {
         return user;
-    }
-    public void setUser(User user) {
-        this.user = user;
     }
     public List<Product> getItems() {
         return items;
@@ -89,9 +83,6 @@ public class Order {
     }
     public String getStatus() {
         return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
     }
     // Method to update the status
     public String updateStatus(String newStatus) {

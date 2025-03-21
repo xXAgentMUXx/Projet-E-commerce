@@ -23,9 +23,6 @@ public class OrderRequest {
     public Long getUserId() { 
         return userId; 
     }
-    public void setUserId(Long userId) { 
-        this.userId = userId; 
-    }
     public List<Long> getProductIds() { 
         return productIds; 
     }
