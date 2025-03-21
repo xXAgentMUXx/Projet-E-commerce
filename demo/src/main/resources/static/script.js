@@ -1,29 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
-    loadProducts();
-    document.getElementById("login-form").addEventListener("submit", loginUser);
-    document.getElementById("register-form").addEventListener("submit", registerUser);
-    document.getElementById("product-form").addEventListener("submit", addProduct);
-    document.getElementById("checkout").addEventListener("click", placeOrder);
+    loadProducts();  // Load products when the page is ready
+    document.getElementById("login-form").addEventListener("submit", loginUser); // Add event listener for login form
+    document.getElementById("register-form").addEventListener("submit", registerUser); // Add event listener for registration form
+    document.getElementById("product-form").addEventListener("submit", addProduct); // Add event listener for product form
+    document.getElementById("checkout").addEventListener("click", placeOrder); // Add event listener for checkout button
 
-    checkUserSession(); // Vérifier si l'utilisateur est connecté
-    displayCart(); // Mettre à jour l'affichage du panier
+    checkUserSession(); // Check if the user is logged in
+    displayCart(); // Update the cart display
 });
 
-// Définition de l'URL de l'API
+// Define the API URL
 const API_BASE_URL = "http://localhost:8080";
 
-// Vérifier si un utilisateur est connecté et vider le panier si non connecté
+// Check if the user is logged in and clear the cart if not logged in
 function checkUserSession() {
     const userId = localStorage.getItem("userId");
     if (!userId) {
-        console.log("Aucun utilisateur connecté. Réinitialisation du panier.");
+        console.log("No user logged in. Resetting the cart.");
         localStorage.removeItem("cart");
     } else {
-        console.log("Utilisateur connecté, ID:", userId);
+        console.log("User logged in, ID:", userId);
     }
 }
 
-// Connexion utilisateur
+// User login
 async function loginUser(event) {
     event.preventDefault();
     const email = event.target[0].value;
@@ -35,21 +35,19 @@ async function loginUser(event) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
         });
-
         if (!response.ok) {
-            throw new Error("Email ou mot de passe incorrect");
+            throw new Error("Incorrect email or password");
         }
-
-        const user = await response.json(); // Récupérer les données utilisateur (ID)
-        localStorage.setItem("userId", user.id); // Stocker l'ID utilisateur
-        alert("Connexion réussie !");
-        location.reload(); // Recharger la page pour actualiser la session
+        const user = await response.json(); // Retrieve user data (ID)
+        localStorage.setItem("userId", user.id); // Store user ID in localStorage
+        alert("Login successful!");
+        location.reload(); // Reload the page to refresh the session
     } catch (error) {
-        alert("Erreur de connexion : " + error.message);
+        alert("Login error: " + error.message);
     }
 }
 
-// Inscription utilisateur
+// User registration
 async function registerUser(event) {
     event.preventDefault();
     const username = document.getElementById("register-username").value;
@@ -62,55 +60,53 @@ async function registerUser(event) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, role })
     });
-
     if (response.ok) {
-        alert("Inscription réussie !");
+        alert("Registration successful!");
     } else {
-        alert("Erreur d'inscription");
+        alert("Registration error");
     }
 }
 
-// Charger les produits depuis l'API
+// Load products from the API
 async function loadProducts() {
     try {
         const response = await fetch(`${API_BASE_URL}/products`);
         const products = await response.json();
-        displayProducts(products);
+        displayProducts(products); // Display products after loading
     } catch (error) {
-        console.error("Erreur lors du chargement des produits:", error);
+        console.error("Error loading products:", error);
     }
 }
 
-// Afficher les produits
+// Display the products on the page
 function displayProducts(products) {
     const productContainer = document.getElementById("product-list");
-    productContainer.innerHTML = "";
+    productContainer.innerHTML = ""; // Clear the current product list
     products.forEach(product => {
         const productElement = document.createElement("div");
         productElement.classList.add("product");
         productElement.innerHTML = `
             <h3>${product.name}</h3>
-            <p>Prix: $${product.price}</p>
+            <p>Price: $${product.price}</p>
             <p>Stock: ${product.stock}</p>
-            <button onclick="addToCart(${product.id})">Ajouter au panier</button>
+            <button onclick="addToCart(${product.id})">Add to Cart</button>
         `;
         productContainer.appendChild(productElement);
     });
 }
 
-// Ajouter un produit via le formulaire
+// Add a product via the product form (Admin only)
 async function addProduct(event) {
     event.preventDefault();
 
     const userId = localStorage.getItem("userId");
     const userRole = localStorage.getItem("userRole");
 
-    // Vérifier si l'utilisateur est connecté et s'il est admin
+    // Check if the user is logged in and is an admin
     if (!userId || userRole !== "ADMIN") {
-        alert("⛔️ Vous n'êtes pas administrateur. Veuillez vous connecter.");
+        alert("You are not an admin. Please log in.");
         return;
     }
-
     const name = document.getElementById("product-name").value;
     const price = parseFloat(document.getElementById("product-price").value);
     const stock = parseInt(document.getElementById("product-quantity").value);
@@ -124,23 +120,22 @@ async function addProduct(event) {
             },
             body: JSON.stringify({ name, price, stock })
         });
-
         if (!response.ok) {
-            throw new Error("Vous n'êtes pas administrateur, veuillez vous connectez.");
+            throw new Error("You are not an admin, please log in.");
         }
-
-        alert("Produit ajouté avec succès !");
-        loadProducts();
+        alert("Product added successfully!");
+        loadProducts(); // Reload the products list after adding a product
     } catch (error) {
         alert(error.message);
     }
 }
 
+// Delete a product (Admin only)
 async function deleteProduct(productId) {
     const userId = localStorage.getItem("userId"); 
 
     if (!userId) {
-        alert("Vous devez être connecté en tant qu'administrateur pour supprimer un produit !");
+        alert("You must be logged in as an administrator to delete a product!");
         return;
     }
     const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
@@ -151,150 +146,147 @@ async function deleteProduct(productId) {
         }
     });
     if (response.ok) {
-        alert("Produit supprimé avec succès !");
-        loadProducts();
+        alert("Product deleted successfully!");
+        loadProducts(); // Reload the products list after deletion
     } else {
         const errorText = await response.text();
         alert("❌ " + errorText);
     }
 }
 
-// Ajouter un produit au panier
+// Add a product to the cart
 function addToCart(productId) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingProduct = cart.find(item => item.productId === productId);
     if (existingProduct) {
-        existingProduct.quantity += 1;
+        existingProduct.quantity += 1; // Increment quantity if product already in cart
     } else {
-        cart.push({ productId, quantity: 1 });
+        cart.push({ productId, quantity: 1 }); // Add new product to cart
     }
     localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Produit ajouté au panier !");
-    displayCart();
+    alert("Product added to cart!");
+    displayCart(); // Update the cart display
 }
 
-// Afficher le panier
+// Display the cart
 function displayCart() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const cartContainer = document.getElementById("cart-items");
     cartContainer.innerHTML = "";
 
     if (cart.length === 0) {
-        cartContainer.innerHTML = "<p>Votre panier est vide.</p>";
+        cartContainer.innerHTML = "<p>Your cart is empty.</p>";
         return;
     }
-
     cart.forEach(item => {
         const itemElement = document.createElement("div");
         itemElement.classList.add("cart-item");
         
         itemElement.innerHTML = `
-            <p>Produit ${item.productId} - Quantité: ${item.quantity} </p>
-            <button onclick="removeFromCart(${item.productId})">Supprimer</button>
+            <p>Product ${item.productId} - Quantity: ${item.quantity} </p>
+            <button onclick="removeFromCart(${item.productId})">Remove</button>
         `;
-
         cartContainer.appendChild(itemElement);
     });
 }
 
-// Passer la commande
+// Place an order
 async function placeOrder() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     if (cart.length === 0) {
-        alert("Votre panier est vide !");
+        alert("Your cart is empty!");
         return;
     }
-
-    const productIds = cart.map(item => item.productId);
-    const quantities = cart.map(item => item.quantity); // Récupérer les quantités
+    const productIds = cart.map(item => item.productId); // Get Product IDs
+    const quantities = cart.map(item => item.quantity); // Get quantities
 
     let userId = localStorage.getItem("userId");
     if (!userId) {
-        alert("Veuillez vous connecter avant de passer une commande.");
+        alert("Please log in before placing an order.");
         return;
     }
 
-    // Vérifier que les produits existent en base AVANT d'envoyer la commande
+    // Verify that the products exist in the database BEFORE sending the order
     try {
         const response = await fetch(`${API_BASE_URL}/products`);
         const products = await response.json();
         const validProductIds = products.map(product => product.id);
 
-        // Filtrer les produits non valides
+        // Filter out invalid products
         const validCartItems = productIds.filter(id => validProductIds.includes(id));
 
         if (validCartItems.length !== productIds.length) {
-            alert("Certains produits de votre panier ne sont plus disponibles !");
-            checkCartValidity(); 
+            alert("Some products in your cart are no longer available!");
+            checkCartValidity(); // Check for cart validity
             return;
         }
     } catch (error) {
-        console.error("Erreur lors de la vérification des produits avant commande :", error);
+        console.error("Error checking products before order:", error);
         return;
     }
-
-    console.log("Envoi de la commande avec :", { userId, productIds, quantities }); // Inclure les quantités
+    console.log("Sending order with:", { userId, productIds, quantities }); // Log order details
 
     try {
         const response = await fetch(`${API_BASE_URL}/orders/place`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: parseInt(userId), productIds, quantities }) // Envoyer les quantités
+            body: JSON.stringify({ userId: parseInt(userId), productIds, quantities }) // Send quantities as well
         });
-
         if (!response.ok) {
             throw new Error(await response.text());
         }
-
-        alert("Commande passée avec succès !");
-        localStorage.removeItem("cart"); 
+        alert("Order placed successfully!");
+        localStorage.removeItem("cart"); // Clear the cart after successful order
         displayCart();
     } catch (error) {
-        console.error("Erreur lors de la commande :", error);
-        alert("Erreur lors de la commande : " + error.message);
+        console.error("Error placing order:", error);
+        alert("Error placing order: " + error.message);
     }
 }
 
-// Appeler cette fonction au chargement de la page
+// Call this function on page load to validate cart
 document.addEventListener("DOMContentLoaded", () => {
     checkCartValidity();
 });
+
+// Remove a product from the cart
 function removeFromCart(productId) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart = cart.filter(item => item.productId !== productId); 
+    cart = cart.filter(item => item.productId !== productId); // Remove product from cart
     localStorage.setItem("cart", JSON.stringify(cart));
-    displayCart(); 
-    alert("Produit supprimé du panier.");
+    displayCart(); // Update the cart display
+    alert("Product removed from cart.");
 }
+
+// Load and display user orders
 async function loadUserOrders() {
     let userId = localStorage.getItem("userId");
 
     if (!userId) {
-        document.getElementById("order-list").innerHTML = "<p>Veuillez vous connecter pour voir vos commandes.</p>";
+        document.getElementById("order-list").innerHTML = "<p>Please log in to view your orders.</p>";
         return;
     }
-
     try {
         const response = await fetch(`${API_BASE_URL}/users/${userId}/orders`);
         if (!response.ok) {
-            throw new Error("Erreur lors du chargement des commandes");
+            throw new Error("Error loading orders");
         }
-        
         const orders = await response.json();
         displayUserOrders(orders);
     } catch (error) {
-        console.error("Erreur lors du chargement des commandes :", error);
-        document.getElementById("order-list").innerHTML = "<p>Impossible de charger les commandes.</p>";
+        console.error("Error loading orders:", error);
+        document.getElementById("order-list").innerHTML = "<p>Unable to load orders.</p>";
     }
 }
 
+// Display the user's orders
 function displayUserOrders(orders) {
     const orderContainer = document.getElementById("order-list");
     orderContainer.innerHTML = "";
 
     if (orders.length === 0) {
-        orderContainer.innerHTML = "<p>Aucune commande passée.</p>";
+        orderContainer.innerHTML = "<p>No orders placed.</p>";
         return;
     }
     orders.forEach(order => {
@@ -302,16 +294,16 @@ function displayUserOrders(orders) {
         orderElement.classList.add("order");
     
         orderElement.innerHTML = `
-            <h3>Commande ID: ${order.orderID}</h3>
+            <h3>Order ID: ${order.orderID}</h3>
             <p>Status: ${order.status}</p>
             <ul>
                 ${order.items.map((item, index) => {
-                    const productName = item.productname || item.name || "Produit inconnu";
+                    const productName = item.productname || item.name || "Unknown product";
                     const productPrice = item.price || 0;
                     const quantity = order.quantities[index] || 1; 
                     const totalPrice = (productPrice * quantity).toFixed(2); 
 
-                    return `<li>${productName} - Prix unitaire: ${productPrice}€ (x${quantity}) - Total: ${totalPrice}€</li>`;
+                    return `<li>${productName} - Unit price: ${productPrice}€ (x${quantity}) - Total: ${totalPrice}€</li>`;
                 }).join("")}
             </ul>
             <hr>
@@ -319,6 +311,8 @@ function displayUserOrders(orders) {
         orderContainer.appendChild(orderElement);
     });
 }
+
+// Call function to load user orders on page load
 document.addEventListener("DOMContentLoaded", () => {
     loadUserOrders();
 });

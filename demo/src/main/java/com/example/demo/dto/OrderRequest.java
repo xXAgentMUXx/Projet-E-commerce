@@ -13,7 +13,7 @@ public class OrderRequest {
     // Default constructors
     public OrderRequest() {}
 
-     // Constructor to initialize properties
+    // Constructor to initialize properties
     public OrderRequest(Long userId, List<Long> productIds, List<Integer> quantities) {
         this.userId = userId;
         this.productIds = productIds;
