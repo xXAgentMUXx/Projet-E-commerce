@@ -16,6 +16,6 @@ public class RegularUser extends User {
     // Method to reduce price for users
     @Override
     public double applyDiscount(double price) {
-        return price * 0.95; 
+        return price; 
     }
 }

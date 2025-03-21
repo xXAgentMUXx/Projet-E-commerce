@@ -89,7 +89,7 @@ function displayProducts(products) {
             <h3>${product.name}</h3>
             <p>Price: $${product.price}</p>
             <p>Stock: ${product.stock}</p>
-            <button onclick="addToCart(${product.id})">Add to Cart</button>
+            <button onclick="addToCart(${product.id})">Ajouter au panier</button>
         `;
         productContainer.appendChild(productElement);
     });
@@ -175,7 +175,7 @@ function displayCart() {
     cartContainer.innerHTML = "";
 
     if (cart.length === 0) {
-        cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+        cartContainer.innerHTML = "<p>Votre panier est vide.</p>";
         return;
     }
     cart.forEach(item => {
@@ -184,7 +184,7 @@ function displayCart() {
         
         itemElement.innerHTML = `
             <p>Product ${item.productId} - Quantity: ${item.quantity} </p>
-            <button onclick="removeFromCart(${item.productId})">Remove</button>
+            <button onclick="removeFromCart(${item.productId})">Supprimer</button>
         `;
         cartContainer.appendChild(itemElement);
     });
@@ -264,7 +264,7 @@ async function loadUserOrders() {
     let userId = localStorage.getItem("userId");
 
     if (!userId) {
-        document.getElementById("order-list").innerHTML = "<p>Please log in to view your orders.</p>";
+        document.getElementById("order-list").innerHTML = "<p>Veuillez vous connecter pour voir vos commandes.</p>";
         return;
     }
     try {
@@ -276,7 +276,7 @@ async function loadUserOrders() {
         displayUserOrders(orders);
     } catch (error) {
         console.error("Erreur lors du chargement des commandes :", error);
-        document.getElementById("order-list").innerHTML = "<p>Unable to load orders.</p>";
+        document.getElementById("order-list").innerHTML = "<p>Impossible de charger les commandes.</p>";
     }
 }
 
@@ -298,12 +298,12 @@ function displayUserOrders(orders) {
             <p>Status: ${order.status}</p>
             <ul>
                 ${order.items.map((item, index) => {
-                    const productName = item.productname || item.name || "Unknown product";
+                    const productName = item.productname || item.name || "Produit inconnu";
                     const productPrice = item.price || 0;
                     const quantity = order.quantities[index] || 1; 
                     const totalPrice = (productPrice * quantity).toFixed(2); 
 
-                    return `<li>${productName} - Unit price: ${productPrice}€ (x${quantity}) - Total: ${totalPrice}€</li>`;
+                    return `<li>${productName} - Prix unité: ${productPrice}€ (x${quantity}) - Total: ${totalPrice}€</li>`;
                 }).join("")}
             </ul>
             <hr>
