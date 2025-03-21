@@ -38,16 +38,13 @@ public class AdminController {
         if (optionalUser.isEmpty() || optionalUser.get().getRole() != Role.ADMIN) {
             return ResponseEntity.status(403).body("Accès refusé : Seuls les administrateurs peuvent ajouter des produits.");
         }
-        // Apply a discount to the product price based on the admin user's
-        double priceAfterDiscount = optionalUser.get().applyDiscount(product.getPrice());
-        product.setPrice(priceAfterDiscount);
+        // Price is stored without discount
+        product.setPrice(product.getPrice());
 
         // Save and return the added product
         Product savedProduct = productService.addProduct(product);
         return ResponseEntity.ok(savedProduct);
     }
-
-    
     @DeleteMapping("/products/{id}")
     public ResponseEntity<?> removeProduct(@PathVariable Long id, @RequestHeader("userId") Long userId) {
         // Fetch the user by their ID to check if the user is an admin

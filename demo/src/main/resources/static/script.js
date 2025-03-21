@@ -40,6 +40,7 @@ async function loginUser(event) {
         }
         const user = await response.json(); // Retrieve user data (ID)
         localStorage.setItem("userId", user.id); // Store user ID in localStorage
+        localStorage.setItem("userRole", user.role);
         alert("Connexion réussi");
         location.reload(); // Reload the page to refresh the session
     } catch (error) {
@@ -286,12 +287,16 @@ function displayUserOrders(orders) {
     orderContainer.innerHTML = "";
 
     if (orders.length === 0) {
-        orderContainer.innerHTML = "<p>No orders placed.</p>";
+        orderContainer.innerHTML = "<p>Pas de commandes.</p>";
         return;
     }
+    const userRole = localStorage.getItem("userRole");
+
     orders.forEach(order => {
         const orderElement = document.createElement("div");
         orderElement.classList.add("order");
+    
+        let orderTotal = 0; 
     
         orderElement.innerHTML = `
             <h3>Order ID: ${order.orderID}</h3>
@@ -300,12 +305,20 @@ function displayUserOrders(orders) {
                 ${order.items.map((item, index) => {
                     const productName = item.productname || item.name || "Produit inconnu";
                     const productPrice = item.price || 0;
-                    const quantity = order.quantities[index] || 1; 
-                    const totalPrice = (productPrice * quantity).toFixed(2); 
+                    const quantity = order.quantities[index] || 1;
+    
+                    let totalPrice = productPrice * quantity;
+    
+                    if (userRole === "ADMIN") {
+                        totalPrice *= 0.9;
+                    }
+                    orderTotal += totalPrice; 
 
-                    return `<li>${productName} - Prix unité: ${productPrice}€ (x${quantity}) - Total: ${totalPrice}€</li>`;
+                    return `<li>${productName} - Prix unité: ${productPrice}€ (x${quantity}) - Total: ${totalPrice.toFixed(2)}€</li>`;
                 }).join("")}
             </ul>
+            <p><strong>Total Commande: ${orderTotal.toFixed(2)}€</strong></p>
+            ${userRole === "ADMIN" ? '<p><small>Avec une réduction de 10% pour les admins</small></p>' : ""}
             <hr>
         `;
         orderContainer.appendChild(orderElement);

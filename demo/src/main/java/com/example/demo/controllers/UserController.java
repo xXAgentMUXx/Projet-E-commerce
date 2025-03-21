@@ -42,20 +42,25 @@ public class UserController {
         // Register the user and return the created user in the response body
         return ResponseEntity.ok(userService.registerUser(username, email, password, role));
     }
+    // Connect the user
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
-    // Extract login credentials from the request body
-    String email = loginData.get("email");
-    String password = loginData.get("password");
-    Optional<User> authenticatedUser = userService.loginUser(email, password);
-    
-    // If authenticated, return the user's ID and username in the response
-    if (authenticatedUser.isPresent()) {
-        User user = authenticatedUser.get();
-        return ResponseEntity.ok(Map.of("id", user.getId(), "username", user.getUsername()));
+        // Extract login credentials from the request body
+        String email = loginData.get("email");
+        String password = loginData.get("password");
+        Optional<User> authenticatedUser = userService.loginUser(email, password);
+        
+        // If authenticated, return the user's ID, username, and role in the response
+        if (authenticatedUser.isPresent()) {
+            User user = authenticatedUser.get();
+            return ResponseEntity.ok(Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "role", user.getRole().name()  
+            ));
+        }
+        return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
     }
-    return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
-}
     // Retrieves the orders of a user by their ID
     @GetMapping("/{id}/orders")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable Long id) {
