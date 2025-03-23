@@ -32,7 +32,7 @@ public class User {
     // Orders attributes, user can have multiple orders
     @OneToMany(mappedBy = "user")
     @JsonBackReference
-    private List<Order> orders = new ArrayList<>();
+    private List<Order> orderHistory = new ArrayList<>();
 
     // The role of the user
     @Enumerated(EnumType.STRING)
@@ -56,10 +56,10 @@ public class User {
         return role;
     }
     public List<Order> getOrders() {
-        return orders;
+        return orderHistory;
     }
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setOrders(List<Order> orderHistory) {
+        this.orderHistory = orderHistory;
     }
     public String getUsername() {
         return username;
@@ -80,11 +80,11 @@ public class User {
     }
     // Method to view the user's order history
     public List<String> viewOrderHistory() {
-        List<String> orderHistory = new ArrayList<>();
-        for (Order order : orders) {
-            orderHistory.add(order.toString());
+        List<String> orders = new ArrayList<>();
+        for (Order order : orderHistory) {
+            orders.add(order.toString());
         }
-        return orderHistory;
+        return orders;
     }
      // Method to apply a discount to the price
     public double applyDiscount(double price) {
