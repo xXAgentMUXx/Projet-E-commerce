@@ -16,11 +16,9 @@ public class Product {
 
     // Name of the product attributes
     @JsonProperty("name")
-
-    // Unique product ID attributes
     private String productname;
 
-
+    // Unique product ID attributes
     private int productID;
 
     // Price of the product attributes

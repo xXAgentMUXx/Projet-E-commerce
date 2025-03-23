@@ -91,10 +91,10 @@ Invoke-WebRequest -Uri "http://localhost:8080/cart/add" -Method Post -Body (@{us
 Invoke-WebRequest -Uri "http://localhost:8080/cart/remove" -Method Post -Body (@{userId=1; productId=1} | ConvertTo-Json -Depth 1) -ContentType "application/json"
 
 # Passer une commande
-Invoke-WebRequest -Uri "http://localhost:8080/orders/place" -Method Post `            
--Headers @{"Content-Type"="application/json"} `
--Body '{"userId":1, "productIds":[1], "quantities":[2]}' `
--UseBasicParsing
+Invoke-WebRequest -Uri "http://localhost:8080/orders/place" -Method Post `
+    -Headers @{"Content-Type"="application/json"} `
+    -Body '{"userId":1, "productIds":[1], "quantities":[2]}' `
+    -UseBasicParsing
 
 # Récupérer les commandes d'un utilisateur
 Invoke-WebRequest -Uri "http://localhost:8080/users/1/orders" -Method Get
