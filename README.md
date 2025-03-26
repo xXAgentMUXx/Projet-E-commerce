@@ -38,20 +38,24 @@ curl -X POST "http://localhost:8080/users/register" \
      -H "Content-Type: application/json" \
      -d '{"username": "john_doe", "email": "john.doe@example.com", "password": "secure123", "role": "REGULAR"}'
 
+
 # Connexion d'un utilisateur
 curl -X POST "http://localhost:8080/users/login" \
      -H "Content-Type: application/json" \
      -d '{"email": "john.doe@example.com", "password": "secure123"}'
+
 
 # Ajout d'un produit
 curl -X POST "http://localhost:8080/products" \
      -H "Content-Type: application/json" \
      -d '{"productID": 101, "name": "Laptop", "price": 999.99, "stock": 10}'
 
+
 # Ajout d'un produit au panier
 curl -X POST "http://localhost:8080/cart/add" \
      -H "Content-Type: application/json" \
      -d '{"userId": 1, "productId": 1, "quantity": 2}'
+
 
 # Suppression d'un produit du panier
 curl -X POST "http://localhost:8080/cart/remove" \
@@ -68,7 +72,6 @@ curl -X GET "http://localhost:8080/users/1/orders"
 
 # Récupérer une commande spécifique
 curl -X GET "http://localhost:8080/orders/1"
-
 
 
 SOUS WINDOWS !!!! :
