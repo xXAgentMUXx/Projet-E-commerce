@@ -88,6 +88,12 @@ SOUS WINDOWS !!!! :
 # Ajout d'un produit
 Invoke-WebRequest -Uri "http://localhost:8080/products" -Method Post -Headers @{"Content-Type"="application/json"} -Body '{"productID": 101, "name": "Laptop", "price": 999.99, "stock": 10}'
 
+# Récupérer un produit
+Invoke-WebRequest -Uri "http://localhost:8080/products/1"
+
+# Récupérer un produit spécifique
+curl -X GET "http://localhost:8080/products/1"
+
 # Ajout d'un produit au panier
 Invoke-WebRequest -Uri "http://localhost:8080/cart/add" -Method Post -Body (@{userId=1;
  productId=1; quantity=2} | ConvertTo-Json -Depth 1) -ContentType "application/json"
