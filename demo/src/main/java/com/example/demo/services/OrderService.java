@@ -30,20 +30,20 @@ public class OrderService {
     public Order placeOrder(Long userId, List<Long> productIds, List<Integer> quantities) {
          // Check for invalid userId or productIds
         if (userId == null || productIds == null || productIds.isEmpty()) {
-            throw new RuntimeException("❌ userId ou productIds est NULL !");
+            throw new RuntimeException("userId ou productIds est NULL !");
         }
         // Fetch the user by ID, return an exception if not found
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("❌ Utilisateur introuvable avec ID: " + userId));
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable avec ID: " + userId));
         
         // Retrieve the products by its ID
         List<Product> products = productRepository.findAllById(productIds);
         if (products.isEmpty()) {
-            throw new RuntimeException("❌ Aucun produit valide trouvé. IDs envoyés: " + productIds);
+            throw new RuntimeException("Aucun produit valide trouvé. IDs envoyés: " + productIds);
         }
         // Check if no valid products were found
         if (products.size() != productIds.size()) {
-            throw new RuntimeException("❌ Certains produits envoyés n'existent pas en base.");
+            throw new RuntimeException("Certains produits envoyés n'existent pas en base.");
         }
         // Ensure that all product IDs match
         for (int i = 0; i < products.size(); i++) {
@@ -51,7 +51,7 @@ public class OrderService {
             int quantityOrdered = quantities.get(i);
             
             if (quantityOrdered > product.getStockquantity()) {
-                throw new RuntimeException("❌ Quantité demandée pour " + product.getProductname() + " dépasse le stock disponible. Stock actuel: " + product.getStockquantity());
+                throw new RuntimeException("Quantité demandée pour " + product.getProductname() + " dépasse le stock disponible. Stock actuel: " + product.getStockquantity());
             }
         }
         String orderID = UUID.randomUUID().toString();
